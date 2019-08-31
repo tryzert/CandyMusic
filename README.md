@@ -1,2 +1,2 @@
 # QtMucisplayer
-A cross platform musicplayer based on C++/Qt
+A cross platform(it should be) musicplayer based on C++/Qt
