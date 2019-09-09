@@ -6,7 +6,7 @@ MusicPlayer::MusicPlayer(QWidget *parent)
 	: QMainWindow(parent)
 {
 	//设置窗体图标
-	this->setWindowIcon(QIcon(":/img/mini底部窗口（2）.png"));
+	this->setWindowIcon(QIcon(":/img/mini.png"));
 	
 	//禁用右键
 	this->setContextMenuPolicy(Qt::NoContextMenu);

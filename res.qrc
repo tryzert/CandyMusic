@@ -1,13 +1,15 @@
 <RCC>
     <qresource prefix="/">
         <file>img/fm.png</file>
-        <file>img/ico.png</file>
+        <file>img/mini.png</file>
+
+        <file>img/bix.png</file>
+        
         <file>img/before.png</file>
         <file>img/next.png</file>
         <file>img/pause.png</file>
         <file>img/play.png</file>
-        <file>img/cp.png</file>
-        <file>img/bix.png</file>
+        
         <file>img/顺序播放.png</file>
         <file>img/列表循环.png</file>
         <file>img/单曲循环.png</file>
