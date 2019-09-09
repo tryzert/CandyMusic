@@ -72,8 +72,6 @@ public:
 	QSlider *load;
 	//音量控制
 	QDial *volume;
-	//状态栏
-	QStatusBar *status;
 
 
 signals:

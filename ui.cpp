@@ -6,12 +6,12 @@ Ui::Ui(QWidget *parent) : QWidget(parent)
 {
 	//打开一个文件
 	openOneFile = new QAction();
-	openOneFile->setText("选择歌曲");
+	openOneFile->setText("导入歌曲");
 	openOneFile->setShortcut(QKeySequence::Open);
 
 	//打开一个文件夹
 	openOneFolder = new QAction();
-	openOneFolder->setText("选择文件夹");
+	openOneFolder->setText("导入文件夹");
 
 	//删除一个文件
 	delOneFile = new QAction();
@@ -81,7 +81,6 @@ Ui::Ui(QWidget *parent) : QWidget(parent)
 
 	//设置按键图标
 	playpause->setIcon(QIcon(":/img/play.png"));
-	//pause->setIcon(QIcon(":/img/pause.png"));
 	next->setIcon(QIcon(":/img/next.png"));
 	before->setIcon(QIcon(":/img/before.png"));
 
@@ -94,16 +93,16 @@ Ui::Ui(QWidget *parent) : QWidget(parent)
 	playmode->setFixedSize(50,50);
 
 	//提示
-	playpause->setStatusTip("播放");
-	//pause->setStatusTip("暂停");
-	next->setStatusTip("下一曲");
-	before->setStatusTip("上一曲");
+	playpause->setToolTip("播放");
+	next->setToolTip("下一曲");
+	before->setToolTip("上一曲");
+	playmode->setToolTip("顺序播放");
 
 	//控制音量大小
 	volume->setMaximum(100);
 	volume->setMinimum(0);
 	volume->setFixedSize(50,50);
-	volume->setStatusTip("音量");
+	volume->setToolTip("音量");
 	//初始化音量
     volume->setValue(35);
 
@@ -113,13 +112,6 @@ Ui::Ui(QWidget *parent) : QWidget(parent)
 	load->setFixedHeight(20);
 	load->setMinimum(0);
 	load->setMaximum(100);
-	load->setStatusTip("歌曲播放进度");
-
-
-	//状态栏
-	status = new QStatusBar;
-	status->setStatusTip("Ready...");
-	status->showMessage("Ready");
-	status->activateWindow();
+	load->setToolTip("歌曲播放进度");
 }
 

@@ -112,7 +112,7 @@ void MusicPlayer::createMenuBar()
 void MusicPlayer::openOneFileFunction()
 {
 	//获得包含绝对路径的文件名
-	QString filePathName = QFileDialog::getOpenFileName(this,QString("选择歌曲"),"/home/maple/software/tank-3.0.5/matter/tryzert/root","*.mp3");
+	QString filePathName = QFileDialog::getOpenFileName(this,QString("选择一首歌曲"),"/home/maple/software/tank-3.0.5/matter/tryzert/root","*.mp3");
 	
     if (filePathName!=nullptr){
 		//将读取的歌曲路径数据放进三个列表
@@ -147,7 +147,6 @@ void MusicPlayer::openOneFolderFunction()
 			}
 		}
 	}
-	//qDebug() << songlist;
 }
 
 
@@ -168,7 +167,7 @@ void MusicPlayer::clearMusicList()
 //关于
 void MusicPlayer::about()
 {
-	QMessageBox::about(this,"关于","巴拉巴拉巴拉。。。");
+	QMessageBox::about(this,"关于","目前功能非常简陋，后续会逐步完善。欢迎提出更多建议。");
 }
 
 
@@ -202,11 +201,13 @@ void MusicPlayer::playerState()
 			qtplayer->pause();
 			ui->songname->setText("播放已停止");
 			ui->playpause->setIcon(QIcon(":/img/play.png"));
+			ui->playpause->setToolTip("播放");
 		} else {
 			qtplayer->play();
 			int currentMusicIndex = qtplaylist->currentIndex();
 			ui->songname->setText("正在播放："+ui->viewlist->item(currentMusicIndex)->text());
 			ui->playpause->setIcon(QIcon(":/img/pause.png"));
+			ui->playpause->setToolTip("暂停");
 		}
 	}
 }
@@ -230,6 +231,7 @@ void MusicPlayer::beforeMusic()
 	qtplayer->play();
 	if (!qtplaylist->isEmpty()) {
 		ui->playpause->setIcon(QIcon(":/img/pause.png"));
+		ui->playpause->setToolTip("暂停");
 	}
 }
 
@@ -252,6 +254,7 @@ void MusicPlayer::nextMusic()
 	qtplayer->play();
 	if (!qtplaylist->isEmpty()) {
 		ui->playpause->setIcon(QIcon(":/img/pause.png"));
+		ui->playpause->setToolTip("暂停");
 	}
 }
 
@@ -263,15 +266,19 @@ void MusicPlayer::setPlayMode()
 	if (qtplaylist->playbackMode()==QMediaPlaylist::Sequential) {
 		qtplaylist->setPlaybackMode(QMediaPlaylist::Loop);
 		ui->playmode->setIcon(QIcon(":/img/列表循环.png"));
+		ui->playmode->setToolTip("列表循环");
 	} else if (qtplaylist->playbackMode()==QMediaPlaylist::Loop) {
 		qtplaylist->setPlaybackMode(QMediaPlaylist::CurrentItemInLoop); 
 		ui->playmode->setIcon(QIcon(":/img/单曲循环.png"));
+		ui->playmode->setToolTip("单曲循环");
 	} else if (qtplaylist->playbackMode()==QMediaPlaylist::CurrentItemInLoop) {
 		qtplaylist->setPlaybackMode(QMediaPlaylist::Random);
 		ui->playmode->setIcon(QIcon(":/img/随机播放.png"));
+		ui->playmode->setToolTip("随机播放");
 	} else if (qtplaylist->playbackMode()==QMediaPlaylist::Random) {
 		qtplaylist->setPlaybackMode(QMediaPlaylist::Sequential);
 		ui->playmode->setIcon(QIcon(":/img/顺序播放.png"));
+		ui->playmode->setToolTip("顺序播放");
 	}
 }
 
@@ -341,5 +348,6 @@ void MusicPlayer::songDoubleClicked(QListWidgetItem *item)
 	qtplaylist->setCurrentIndex(ui->viewlist->currentRow());
 	qtplayer->play();
 	ui->playpause->setIcon(QIcon(":/img/pause.png"));
+	ui->playpause->setToolTip("暂停");
 }
 
