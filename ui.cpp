@@ -65,38 +65,37 @@ Ui::Ui(QWidget *parent) : QWidget(parent)
 
 	//播放控制
 	//播放按钮
-	play = new QToolButton;
-	//暂停
-	pause = new QToolButton;
-	//停止
-	stop = new QToolButton;
+	playpause = new QToolButton;
 	//上一曲
 	before = new QToolButton;
 	//下一曲
 	next = new QToolButton;
+
+	//循环模式
+	playmode = new QToolButton;
+
 	//进度条
 	load = new QSlider;
 	//音量控制
 	volume = new QDial;
 
 	//设置按键图标
-	play->setIcon(QIcon(":/img/play.png"));
-	pause->setIcon(QIcon(":/img/pause.png"));
-	stop->setIcon(QIcon(":/img/stop.png"));
+	playpause->setIcon(QIcon(":/img/play.png"));
+	//pause->setIcon(QIcon(":/img/pause.png"));
 	next->setIcon(QIcon(":/img/next.png"));
 	before->setIcon(QIcon(":/img/before.png"));
 
+	playmode->setIcon(QIcon(":/img/顺序播放.png"));
+
 	//设置按键大小
-	play->setFixedSize(50,50);
-	pause->setFixedSize(50,50);
-	stop->setFixedSize(50,50);
+	playpause->setFixedSize(50,50);
 	next->setFixedSize(50,50);
 	before->setFixedSize(50,50);
+	playmode->setFixedSize(50,50);
 
 	//提示
-	play->setStatusTip("播放");
-	pause->setStatusTip("暂停");
-	stop->setStatusTip("停止");
+	playpause->setStatusTip("播放");
+	//pause->setStatusTip("暂停");
 	next->setStatusTip("下一曲");
 	before->setStatusTip("上一曲");
 

@@ -28,7 +28,7 @@ class MusicPlayer : public QMainWindow
 
 public:
 	//构造函数
-	MusicPlayer(QWidget *parent = 0);
+    MusicPlayer(QWidget *parent = nullptr);
 	//析构函数
 	~MusicPlayer();
 
@@ -73,16 +73,14 @@ public slots:
 	//关于
 	void about();
 
-	//播放音乐
-	void playMusic();
-	//暂停播放
-	void pauseMusic();
-	//停止
-	void stopMusic();
+	//播放或暂停音乐
+	void playerState();
 	//上一曲
 	void beforeMusic();
 	//下一曲
 	void nextMusic();
+	//设置歌曲循环模式
+	void setPlayMode();
 	//改变音量大小
 	void changeVolume();
 	//设置进度条
@@ -101,6 +99,7 @@ protected:
 
 
 signals:
+
 };
 
 

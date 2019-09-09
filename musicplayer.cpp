@@ -12,7 +12,7 @@ MusicPlayer::MusicPlayer(QWidget *parent)
 	this->setContextMenuPolicy(Qt::NoContextMenu);
 	
 	//窗体大小
-	this->setFixedSize(750,530);
+	this->setFixedSize(700,530);
 	
 	//控件UI组件
 	ui = new Ui();
@@ -47,20 +47,17 @@ MusicPlayer::MusicPlayer(QWidget *parent)
 	//关于
 	connect(ui->about,SIGNAL(triggered(bool)),this,SLOT(about()));
 
-	//播放
-	connect(ui->play,SIGNAL(clicked(bool)),this,SLOT(playMusic()));
-
-	//暂停
-	connect(ui->pause,SIGNAL(clicked(bool)),this,SLOT(pauseMusic()));
-
-	//停止
-	connect(ui->stop,SIGNAL(clicked(bool)),this,SLOT(stopMusic()));
+	//播放或暂停
+	connect(ui->playpause,SIGNAL(clicked(bool)),this,SLOT(playerState()));
 
 	//上一曲
 	connect(ui->before,SIGNAL(clicked(bool)),this,SLOT(beforeMusic()));
 
 	//下一曲
 	connect(ui->next,SIGNAL(clicked(bool)),this,SLOT(nextMusic()));
+
+	//歌曲播放循环模式
+	connect(ui->playmode,SIGNAL(clicked(bool)),this,SLOT(setPlayMode()));
 
 	//改变音量大小
 	connect(ui->volume,SIGNAL(valueChanged(int)),this,SLOT(changeVolume()));
@@ -117,7 +114,7 @@ void MusicPlayer::openOneFileFunction()
 	//获得包含绝对路径的文件名
 	QString filePathName = QFileDialog::getOpenFileName(this,QString("选择歌曲"),"/home/maple/software/tank-3.0.5/matter/tryzert/root","*.mp3");
 	
-	if (filePathName!=NULL){
+    if (filePathName!=nullptr){
 		//将读取的歌曲路径数据放进三个列表
 		//１．添加到QMediaPlayList
 		qtplaylist->addMedia(QUrl::fromLocalFile(filePathName));
@@ -138,7 +135,7 @@ void MusicPlayer::openOneFolderFunction()
 
 	QString OneFolderName = QFileDialog::getExistingDirectory(this,"选择一个文件夹", "/home/maple/software/tank-3.0.5/matter/tryzert/root");
 	QDir dir(OneFolderName);
-	if (OneFolderName!=NULL) {
+	if (OneFolderName!=nullptr) {
 		foreach (QFileInfo info, dir.entryInfoList()) {
 			if (info.isFile()) {
 				//１．添加到QMediaPlayList
@@ -179,11 +176,10 @@ void MusicPlayer::about()
 void MusicPlayer::createToolBar()
 {
 	QToolBar *playctrl = new QToolBar(this);
-	playctrl->addWidget(ui->stop);
-	playctrl->addWidget(ui->play);
 	playctrl->addWidget(ui->before);
-	playctrl->addWidget(ui->pause);
+	playctrl->addWidget(ui->playpause);
 	playctrl->addWidget(ui->next);
+	playctrl->addWidget(ui->playmode);
 	this->addToolBar(Qt::BottomToolBarArea,playctrl);
 
 
@@ -198,30 +194,42 @@ void MusicPlayer::createToolBar()
 
 
 //播放音乐按钮点击事件
-void MusicPlayer::playMusic()
+void MusicPlayer::playerState()
 {
-	qtplayer->play();
+	//如果歌曲列表非空，进行操作。否则点击不起作用
+	if (!qtplaylist->isEmpty()) {
+		if (qtplayer->state() == QMediaPlayer::PlayingState) {
+			qtplayer->pause();
+			ui->songname->setText("播放已停止");
+			ui->playpause->setIcon(QIcon(":/img/play.png"));
+		} else {
+			qtplayer->play();
+			int currentMusicIndex = qtplaylist->currentIndex();
+			ui->songname->setText("正在播放："+ui->viewlist->item(currentMusicIndex)->text());
+			ui->playpause->setIcon(QIcon(":/img/pause.png"));
+		}
+	}
 }
 
-//暂停播放按钮点击事件
-void MusicPlayer::pauseMusic()
-{
-	qtplayer->pause();
-}
-
-//停止播放
-void MusicPlayer::stopMusic()
-{
-	qtplayer->stop();
-    ui->songname->setText("已停止播放");
-}
 
 //上一曲
 void MusicPlayer::beforeMusic()
 {
-	if (qtplaylist->currentIndex() > 0) {
+	//随机播放时，上一曲会跳跃播放。其他模式时，上一曲是紧挨着当前播放曲目的
+	if (qtplaylist->playbackMode()==QMediaPlaylist::Random) {
 		qtplaylist->previous();
-
+	} else {
+		if (qtplaylist->currentIndex() > 0) {
+			//qtplaylist->previous();
+			//当循环模式为单曲循环,用previous方法，始终一首歌，点击上一曲也不会切歌。下面这个方法才能切歌。
+			qtplaylist->setCurrentIndex(qtplaylist->currentIndex()-1);
+		} else {
+			qtplaylist->setCurrentIndex(qtplaylist->mediaCount()-1);
+		}
+	}
+	qtplayer->play();
+	if (!qtplaylist->isEmpty()) {
+		ui->playpause->setIcon(QIcon(":/img/pause.png"));
 	}
 }
 
@@ -229,16 +237,51 @@ void MusicPlayer::beforeMusic()
 //下一曲
 void MusicPlayer::nextMusic()
 {
-	if (qtplaylist->currentIndex() < qtplaylist->mediaCount()-1) {
+	//随机播放时，下一曲会跳跃播放。其他模式时，下一曲是紧挨着当前曲目的
+	if (qtplaylist->playbackMode()==QMediaPlaylist::Random) {
 		qtplaylist->next();
+	} else {
+		if (qtplaylist->currentIndex() < qtplaylist->mediaCount()-1) {
+			//qtplaylist->next();
+			//当循环模式为单曲循环,用next方法，始终一首歌，点击下一曲也不会切歌。下面这个方法才能切歌。
+			qtplaylist->setCurrentIndex(qtplaylist->currentIndex()+1);
+		} else {
+			qtplaylist->setCurrentIndex(0);
+		}
+	}
+	qtplayer->play();
+	if (!qtplaylist->isEmpty()) {
+		ui->playpause->setIcon(QIcon(":/img/pause.png"));
 	}
 }
+
+
+//循环模式
+void MusicPlayer::setPlayMode()
+{
+	//Sequential为顺序播放。Loop为列表循环。CurrentItemInLoop为单曲循环。Random为随机。
+	if (qtplaylist->playbackMode()==QMediaPlaylist::Sequential) {
+		qtplaylist->setPlaybackMode(QMediaPlaylist::Loop);
+		ui->playmode->setIcon(QIcon(":/img/列表循环.png"));
+	} else if (qtplaylist->playbackMode()==QMediaPlaylist::Loop) {
+		qtplaylist->setPlaybackMode(QMediaPlaylist::CurrentItemInLoop); 
+		ui->playmode->setIcon(QIcon(":/img/单曲循环.png"));
+	} else if (qtplaylist->playbackMode()==QMediaPlaylist::CurrentItemInLoop) {
+		qtplaylist->setPlaybackMode(QMediaPlaylist::Random);
+		ui->playmode->setIcon(QIcon(":/img/随机播放.png"));
+	} else if (qtplaylist->playbackMode()==QMediaPlaylist::Random) {
+		qtplaylist->setPlaybackMode(QMediaPlaylist::Sequential);
+		ui->playmode->setIcon(QIcon(":/img/顺序播放.png"));
+	}
+}
+
 
 //改变音量大小
 void MusicPlayer::changeVolume()
 {
 	qtplayer->setVolume(ui->volume->value());
 }
+
 
 //改变进度条
 void MusicPlayer::changeLoad() 
@@ -251,15 +294,17 @@ void MusicPlayer::changeLoad()
 	}
 }  
 
+
 //设置进度条最大值
 void MusicPlayer::setLoadMaxValue() 
 {
 	if (qtplayer->isAudioAvailable()) {
 		long a = qtplayer->duration()/1000;
-		int temp = (int) a;
+        int temp = (int) a;
 		ui->load->setMaximum(temp);
 	}
 }
+
 
 //设置音乐播放进度
 void MusicPlayer::setMusicPosition() 
@@ -270,14 +315,22 @@ void MusicPlayer::setMusicPosition()
 	}
 }
 
+
 //切换歌曲(自动切换，手动切换)
 void MusicPlayer::indexChanged()
 {
 	//获得当前播放歌曲索引位置
 	int currentMusicIndex = qtplaylist->currentIndex();
-	//标题显示正在播放的歌曲名
-	ui->songname->setText("正在播放："+ui->viewlist->item(currentMusicIndex)->text());
+	//索引为-1时表示列表最后一首歌曲播放完毕，停止播放。
+	if (currentMusicIndex!=-1) {
+		//标题显示正在播放的歌曲名
+		ui->songname->setText("正在播放："+ui->viewlist->item(currentMusicIndex)->text());
+	} else {
+		ui->playpause->setIcon(QIcon(":/img/play.png"));
+		ui->songname->setText("播放已停止");
+	}
 }
+
 
 //对歌曲列表某一首歌双击
 void MusicPlayer::songDoubleClicked(QListWidgetItem *item)
@@ -286,5 +339,7 @@ void MusicPlayer::songDoubleClicked(QListWidgetItem *item)
 	ui->songname->setText("正在播放："+item->text());
 	//获取双击索引，及所在行号。并设置当前播放歌曲为双击选中行
 	qtplaylist->setCurrentIndex(ui->viewlist->currentRow());
+	qtplayer->play();
+	ui->playpause->setIcon(QIcon(":/img/pause.png"));
 }
 
