@@ -12,14 +12,21 @@ MusicPlayer::MusicPlayer(QWidget *parent)
 	this->setContextMenuPolicy(Qt::NoContextMenu);
 	
 	//窗体大小
-	this->setFixedSize(700,530);
+	this->setFixedSize(700,500);
 	
 	//控件UI组件
 	ui = new Ui();
 	this->setCentralWidget(ui);
 
 	createMenuBar();
-	createToolBar();
+	//createToolBar();
+
+
+	QPixmap pix = QPixmap("/home/maple/图片/Wallpapers/155222-1529481142eabe.jpg").scaled(this->size());
+    QPalette pal(this->palette());
+    pal.setBrush(QPalette::Background, QBrush(pix));
+    this->setPalette(pal);
+    this->setAutoFillBackground(true);
 
 
 	//构造音乐播放器，并设置一个默认播放对象
@@ -60,7 +67,8 @@ MusicPlayer::MusicPlayer(QWidget *parent)
 	connect(ui->playmode,SIGNAL(clicked(bool)),this,SLOT(setPlayMode()));
 
 	//改变音量大小
-	connect(ui->volume,SIGNAL(valueChanged(int)),this,SLOT(changeVolume()));
+	connect(ui->volume1,SIGNAL(clicked(bool)),this,SLOT(volume1_clicked()));
+	connect(ui->volume2,SIGNAL(valueChanged(int)),this,SLOT(changeVolume()));
 
 	//进度条移动，durationChanged是当前歌曲播放进度发生变化
 	connect(qtplayer,SIGNAL(positionChanged(qint64)),this,SLOT(changeLoad()));
@@ -175,13 +183,19 @@ void MusicPlayer::about()
 void MusicPlayer::createToolBar()
 {
 	QToolBar *playctrl = new QToolBar(this);
+	playctrl->setStyleSheet("backgroud:transparent;");
 	playctrl->addWidget(ui->before);
 	playctrl->addWidget(ui->playpause);
 	playctrl->addWidget(ui->next);
 	playctrl->addWidget(ui->playmode);
+	playctrl->addWidget(ui->volume1);
+	playctrl->addWidget(ui->volume2);
+	playctrl->addWidget(ui->load);
+
+	//ui->playpause->setStyleSheet("backgroud: transparent;");
 	this->addToolBar(Qt::BottomToolBarArea,playctrl);
 
-
+	/*
 	QToolBar *volumectrl = new QToolBar(this);
 	volumectrl->addWidget(ui->volume);
 	this->addToolBar(Qt::BottomToolBarArea,volumectrl);
@@ -189,6 +203,7 @@ void MusicPlayer::createToolBar()
 	QToolBar *loadctrl = new QToolBar(this);
 	loadctrl->addWidget(ui->load);
 	this->addToolBar(Qt::BottomToolBarArea,loadctrl);
+	*/
 }
 
 
@@ -286,9 +301,26 @@ void MusicPlayer::setPlayMode()
 //改变音量大小
 void MusicPlayer::changeVolume()
 {
-	qtplayer->setVolume(ui->volume->value());
+	qtplayer->setVolume(ui->volume2->value());
+	if (ui->volume2->value()==0) {
+		ui->volume1->setIcon(QIcon(":/img/声音关.png"));
+	}
+	else {
+		ui->volume1->setIcon(QIcon(":/img/声音开.png"));
+	}
 }
 
+
+void MusicPlayer::volume1_clicked()
+{
+	/*
+	if (ui->volume2->volue()==0) {
+		ui->volume2->show();
+	} else {
+		ui->volume2->hide();
+	}
+	*/
+}
 
 //改变进度条
 void MusicPlayer::changeLoad() 

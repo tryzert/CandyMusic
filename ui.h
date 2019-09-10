@@ -15,7 +15,7 @@
 #include <QPushButton>
 #include <QToolButton>
 #include <QSlider>
-#include <QDial>
+//#include <QDial>
 #include <QFileDialog>
 #include <QUrl>
 #include <QDir>
@@ -71,7 +71,8 @@ public:
 	//播放进度条
 	QSlider *load;
 	//音量控制
-	QDial *volume;
+	QToolButton *volume1;
+	QSlider *volume2;
 
 
 signals:

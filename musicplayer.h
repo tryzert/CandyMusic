@@ -59,6 +59,7 @@ public:
 	//歌曲数据
 	//QStringList sl;
 
+
 public slots:
 	//打开文件
 	void openOneFileFunction();
@@ -83,6 +84,7 @@ public slots:
 	void setPlayMode();
 	//改变音量大小
 	void changeVolume();
+	void volume1_clicked();
 	//设置进度条
 	void changeLoad();  //改变进度条
 	void setLoadMaxValue(); //设置进度条最大值

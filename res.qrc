@@ -14,5 +14,9 @@
         <file>img/列表循环.png</file>
         <file>img/单曲循环.png</file>
         <file>img/随机播放.png</file>
+        <file>img/声音开.png</file>
+        <file>img/声音关.png</file>
+
+        <file>img/bg.jpg</file>
     </qresource>
 </RCC>
