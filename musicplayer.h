@@ -11,6 +11,7 @@
 #include <QFileDialog>
 #include <QList>
 #include <QUrl>
+#include <QTime>
 #include <QDir>
 #include <QFileInfo>
 #include <QStringListModel>
@@ -20,6 +21,8 @@
 #include <QMediaMetaData>
 #include <QMessageBox>
 #include <QMediaContent>
+#include <QSqlDatabase>
+#include <QSqlQuery>
 #include "ui.h"
 
 class MusicPlayer : public QMainWindow
@@ -34,6 +37,7 @@ public:
 
 	void createMenuBar();
 	void createToolBar();
+
 
 	//UI
 	Ui *ui;
@@ -58,6 +62,9 @@ public:
 
 	//歌曲数据
 	//QStringList sl;
+	//数据库存放歌曲信息
+	QSqlDatabase db;
+	void connectdb();
 
 
 public slots:
@@ -96,6 +103,9 @@ public slots:
 	//对歌曲列表某一首歌双击
 	void songDoubleClicked(QListWidgetItem *);
 	//void musicStateChanged(QMediaPlayer::State _state);
+
+	//鼠标点击事件
+	void mousePressEvent(QMouseEvent *event);
 
 protected:
 

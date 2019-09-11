@@ -42,6 +42,7 @@ Ui::Ui(QWidget *parent) : QWidget(parent)
 	QHBoxLayout *h2 = new QHBoxLayout();
 	QHBoxLayout *h3 = new QHBoxLayout();
 
+	QVBoxLayout *v1 = new QVBoxLayout();
 
 	songname->setText("请打开歌曲...");
 	songname->setFixedSize(700,30);
@@ -78,18 +79,31 @@ Ui::Ui(QWidget *parent) : QWidget(parent)
 
 	//进度条
 	load = new QSlider;
+	//进度条时间显示
+	time_progress = new QLabel;
+	time_progress->setText("00:00 / 00:00");
+	time_progress->setAlignment(Qt::AlignHCenter);
+	time_progress->setFixedHeight(20);
+
+	progress_ = new QLabel;
+	progress_->setFixedHeight(10);
 	//音量控制
 	volume1 = new QToolButton;
-	volume2 = new QSlider;
+	volume2 = new QSlider(this); //volume2放到主界面，如果没有this,音量滑块就会另开窗口
+	volume2->setGeometry(QRect(223,375,100,100));
+	volume2->hide();
 	//volume->setStyleSheet("background:transparent");
 
 	h3->addWidget(before);
 	h3->addWidget(playpause);
 	h3->addWidget(next);
-	h3->addWidget(load);
 	h3->addWidget(playmode);
 	h3->addWidget(volume1);
-	h3->addWidget(volume2);
+	//h3->addWidget(volume2);
+	v1->addWidget(time_progress);
+	v1->addWidget(load);
+	v1->addWidget(progress_);
+	h3->addLayout(v1);
 	root->addLayout(h3);
 
 	//设置按键图标
@@ -104,7 +118,7 @@ Ui::Ui(QWidget *parent) : QWidget(parent)
 	next->setFixedSize(50,50);
 	before->setFixedSize(50,50);
 	playmode->setFixedSize(50,50);
-	volume1->setFixedSize(50,50);
+	volume1->setFixedSize(30,30);
 
 	//提示
 	playpause->setToolTip("播放");
@@ -112,6 +126,7 @@ Ui::Ui(QWidget *parent) : QWidget(parent)
 	before->setToolTip("上一曲");
 	playmode->setToolTip("顺序播放");
 	volume1->setToolTip("音量");
+	volume2->setToolTip("音量控制");
 
 	//控制音量大小
 	volume2->setMaximum(100);
@@ -124,11 +139,11 @@ Ui::Ui(QWidget *parent) : QWidget(parent)
 
 	//设置水平进度条
 	load->setOrientation(Qt::Horizontal);
-	load->setFixedHeight(20);
+	load->setFixedHeight(10);
 	load->setMinimum(0);
 	load->setMaximum(100);
 	load->setToolTip("歌曲播放进度");
-
+	
 	before->setStyleSheet("border:none");
 	playpause->setStyleSheet("border:none");
 	next->setStyleSheet("border:none");
@@ -136,5 +151,6 @@ Ui::Ui(QWidget *parent) : QWidget(parent)
 	volume1->setStyleSheet("border:none");
 	volume2->setStyleSheet("border:none");
 	load->setStyleSheet("border:none");
+
 }
 

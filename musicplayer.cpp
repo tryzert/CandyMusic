@@ -21,7 +21,7 @@ MusicPlayer::MusicPlayer(QWidget *parent)
 	createMenuBar();
 	//createToolBar();
 
-
+	//设置背景图片
 	QPixmap pix = QPixmap("/home/maple/图片/Wallpapers/155222-1529481142eabe.jpg").scaled(this->size());
     QPalette pal(this->palette());
     pal.setBrush(QPalette::Background, QBrush(pix));
@@ -41,7 +41,20 @@ MusicPlayer::MusicPlayer(QWidget *parent)
 
 	//将列表关联到播放器
 	qtplayer->setPlaylist(qtplaylist);
+
+	//数据库存放歌曲信息。进行初始化
+	db = QSqlDatabase::addDatabase("QSQLITE");
+	db.setDatabaseName("musiclist.db");
 	
+	if (db.open()) {
+		QSqlQuery query;
+		//filePathName:包含绝对路径的文件名称。songname:不含路径和后缀名的文件名称
+	    query.exec("create table musiclist (filePathName varchar, songname varchar)"); 
+		db.close();
+		qDebug() << "成功初始化数据库...";
+	}
+
+	connectdb();
 	//歌曲数据列表，暂时用不到
 	//QList<QString> songlist;
 
@@ -84,6 +97,7 @@ MusicPlayer::MusicPlayer(QWidget *parent)
 
 	//对歌曲列表某一首歌双击
 	connect(ui->viewlist,SIGNAL(itemDoubleClicked(QListWidgetItem*)),this,SLOT(songDoubleClicked(QListWidgetItem *)));
+
 }
 
 //析构函数
@@ -132,6 +146,11 @@ void MusicPlayer::openOneFileFunction()
 		QFileInfo fileinfo(filePathName);
 		QString songname = fileinfo.baseName();
 		ui->viewlist->addItem(songname);
+		if (db.open()) {
+			QSqlQuery query;
+			query.exec(QString("insert into musiclist values('%1','%2')").arg(filePathName).arg(songname));
+			db.close();
+		}
 		//qDebug() << qtplaylist;//songlist;
 	}
 }
@@ -144,15 +163,20 @@ void MusicPlayer::openOneFolderFunction()
 	QString OneFolderName = QFileDialog::getExistingDirectory(this,"选择一个文件夹", "/home/maple/software/tank-3.0.5/matter/tryzert/root");
 	QDir dir(OneFolderName);
 	if (OneFolderName!=nullptr) {
-		foreach (QFileInfo info, dir.entryInfoList()) {
-			if (info.isFile()) {
-				//１．添加到QMediaPlayList
-				qtplaylist->addMedia(QMediaContent(QUrl::fromLocalFile(info.filePath())));
-				//２．添加到QList。暂时用不到，先注释掉
-				//songlist << info.filePath();
-				//３．添加到视图QListWidget
-				ui->viewlist->addItem(info.baseName());
+		if (db.open()) {
+			QSqlQuery query;
+			foreach (QFileInfo info, dir.entryInfoList()) {
+				if (info.isFile()) {
+					//１．添加到QMediaPlayList
+					qtplaylist->addMedia(QMediaContent(QUrl::fromLocalFile(info.filePath())));
+					//２．添加到QList。暂时用不到，先注释掉
+					//songlist << info.filePath();
+					//３．添加到视图QListWidget
+					ui->viewlist->addItem(info.baseName());										
+					query.exec(QString("insert into musiclist values('%1','%2')").arg(info.filePath()).arg(info.baseName()));											
+				}
 			}
+			db.close();
 		}
 	}
 }
@@ -313,24 +337,28 @@ void MusicPlayer::changeVolume()
 
 void MusicPlayer::volume1_clicked()
 {
-	/*
-	if (ui->volume2->volue()==0) {
+	
+	if (ui->volume2->isHidden()) {
 		ui->volume2->show();
 	} else {
 		ui->volume2->hide();
 	}
-	*/
+	
 }
 
 //改变进度条
 void MusicPlayer::changeLoad() 
 {
-	long l = qtplayer->position()/1000;
-	int temp = (int) l;
-	ui->load->setValue(temp);
-	if (ui->load->value()==((int)(qtplayer->duration()/1000))) {
+	int dur_time = (int) (qtplayer->duration()/1000);  //歌曲时间长度
+	int cur_time = (int) (qtplayer->position()/1000);  //进度条当前位置
+	ui->load->setValue(cur_time);
+	if (ui->load->value()>dur_time) {
 		ui->load->setValue(0);
+		return;
 	}
+	QTime durationTime = QTime(0,(dur_time/60)%60,dur_time%60);
+	QTime currentTime = QTime(0,(cur_time/60)%60,cur_time%60);
+	ui->time_progress->setText(currentTime.toString("mm:ss")+" / "+durationTime.toString("mm:ss"));
 }  
 
 
@@ -383,3 +411,22 @@ void MusicPlayer::songDoubleClicked(QListWidgetItem *item)
 	ui->playpause->setToolTip("暂停");
 }
 
+
+//响应鼠标点击事件
+void MusicPlayer::mousePressEvent(QMouseEvent *event)
+{
+	ui->volume2->hide(); //隐藏音量滑块
+}
+
+//连接数据库
+void MusicPlayer::connectdb()
+{
+	if (db.open()) {
+		QSqlQuery query;
+		query.exec("select * from musiclist");
+		while (query.next()) {
+			qtplaylist->addMedia(QMediaContent(QUrl::fromLocalFile(query.value(0).toString())));
+			ui->viewlist->addItem(query.value(1).toString());
+		}
+	}
+}

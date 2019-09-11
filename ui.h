@@ -15,7 +15,6 @@
 #include <QPushButton>
 #include <QToolButton>
 #include <QSlider>
-//#include <QDial>
 #include <QFileDialog>
 #include <QUrl>
 #include <QDir>
@@ -27,6 +26,7 @@
 #include <QMediaPlaylist>
 #include <QListWidget>
 #include <QListWidgetItem>
+
 
 class Ui : public QWidget
 {
@@ -70,6 +70,9 @@ public:
 
 	//播放进度条
 	QSlider *load;
+	//进度条时间显示
+	QLabel *time_progress;
+	QLabel *progress_;
 	//音量控制
 	QToolButton *volume1;
 	QSlider *volume2;
