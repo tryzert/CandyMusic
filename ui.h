@@ -73,9 +73,13 @@ public:
 	//进度条时间显示
 	QLabel *time_progress;
 	QLabel *progress_;
+
 	//音量控制
 	QToolButton *volume1;
 	QSlider *volume2;
+
+	//定位键
+	QToolButton *locate;
 
 
 signals:

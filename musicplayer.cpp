@@ -51,10 +51,17 @@ MusicPlayer::MusicPlayer(QWidget *parent)
 		//filePathName:包含绝对路径的文件名称。songname:不含路径和后缀名的文件名称
 	    query.exec("create table musiclist (filePathName varchar, songname varchar)"); 
 		db.close();
-		qDebug() << "成功初始化数据库...";
+		//qDebug() << "成功初始化数据库...";
 	}
 
 	connectdb();
+
+	if (qtplaylist->isEmpty()) {
+		ui->songname->setText("请打开歌曲...");
+	} else {
+		ui->songname->setText("播放已停止");
+	}
+	
 	//歌曲数据列表，暂时用不到
 	//QList<QString> songlist;
 
@@ -63,6 +70,12 @@ MusicPlayer::MusicPlayer(QWidget *parent)
 
 	//打开文件夹
 	connect(ui->openOneFolder,SIGNAL(triggered(bool)),this,SLOT(openOneFolderFunction()));
+
+	//移除歌曲
+	connect(ui->delOneFile,SIGNAL(triggered(bool)),this,SLOT(delMusicFile()));
+
+	//清空歌单
+	connect(ui->clearPlayList,SIGNAL(triggered(bool)),this,SLOT(clearMusicList()));
 
 	//关于
 	connect(ui->about,SIGNAL(triggered(bool)),this,SLOT(about()));
@@ -82,6 +95,9 @@ MusicPlayer::MusicPlayer(QWidget *parent)
 	//改变音量大小
 	connect(ui->volume1,SIGNAL(clicked(bool)),this,SLOT(volume1_clicked()));
 	connect(ui->volume2,SIGNAL(valueChanged(int)),this,SLOT(changeVolume()));
+
+	//定位到当前播放歌曲
+	connect(ui->locate,SIGNAL(clicked(bool)),this,SLOT(locate_clicked()));
 
 	//进度条移动，durationChanged是当前歌曲播放进度发生变化
 	connect(qtplayer,SIGNAL(positionChanged(qint64)),this,SLOT(changeLoad()));
@@ -146,6 +162,7 @@ void MusicPlayer::openOneFileFunction()
 		QFileInfo fileinfo(filePathName);
 		QString songname = fileinfo.baseName();
 		ui->viewlist->addItem(songname);
+		ui->songname->setText("播放已停止");
 		if (db.open()) {
 			QSqlQuery query;
 			query.exec(QString("insert into musiclist values('%1','%2')").arg(filePathName).arg(songname));
@@ -163,6 +180,7 @@ void MusicPlayer::openOneFolderFunction()
 	QString OneFolderName = QFileDialog::getExistingDirectory(this,"选择一个文件夹", "/home/maple/software/tank-3.0.5/matter/tryzert/root");
 	QDir dir(OneFolderName);
 	if (OneFolderName!=nullptr) {
+		ui->songname->setText("播放已停止");
 		if (db.open()) {
 			QSqlQuery query;
 			foreach (QFileInfo info, dir.entryInfoList()) {
@@ -183,23 +201,64 @@ void MusicPlayer::openOneFolderFunction()
 
 
 //将歌曲从歌单移除
-void MusicPlayer::delMusicFile()
-{
+void MusicPlayer::delMusicFile() //ui->viewlist->currentRow()
+{	
+	if (qtplaylist->mediaCount()>0) {
+		int values=QMessageBox::information(this,("移除选中歌曲"),("确定从歌单中移除下面歌曲吗?(不会删除原文件)\n"+ui->viewlist->currentItem()->text()),QMessageBox::Yes|QMessageBox::No,QMessageBox::No);
+		if (values==QMessageBox::Yes) {
+			if (qtplaylist->mediaCount()>1) {
+				qtplayer->stop();
+				int delRow = ui->viewlist->currentRow();	
+				if (db.open()) {
+					QSqlQuery query;
+					query.exec(QString("delete from musiclist where songname=('%1')").arg(ui->viewlist->item(delRow)->text()));
+					db.close();
+				}		
+				ui->viewlist->takeItem(delRow);
+				qtplaylist->removeMedia(delRow);
+				ui->songname->setText("播放已停止");
+				ui->playpause->setIcon(QIcon(":/img/play.png"));
+				ui->playpause->setToolTip("播放");				
 
+			} else if (qtplaylist->mediaCount()==1) {
+				ui->viewlist->clear();
+				ui->songname->setText("请打开歌曲...");
+				qtplaylist->clear();
+				ui->playpause->setIcon(QIcon(":/img/play.png"));
+				ui->playpause->setToolTip("播放");
+				QFile file("./musiclist.db");
+				if (file.exists()) {
+					file.remove();
+				}
+			}
+			
+		}
+	}	
 }
 
 
-//清理播放列表
+//清空播放列表
 void MusicPlayer::clearMusicList()
 {
-
+	int values=QMessageBox::information(this,("清空歌单"),("确定清空歌单?\n(不会删除原文件)"),QMessageBox::Yes|QMessageBox::No,QMessageBox::No);
+	if (values==QMessageBox::Yes) {
+		ui->viewlist->clear();
+		ui->songname->setText("请打开歌曲...");
+		qtplaylist->clear();
+		ui->playpause->setIcon(QIcon(":/img/play.png"));
+		ui->playpause->setToolTip("播放");
+		QFile file("./musiclist.db");
+		if (file.exists()) {
+			file.remove();
+		}
+	}
 }
 
 
 //关于
 void MusicPlayer::about()
 {
-	QMessageBox::about(this,"关于","目前功能非常简陋，后续会逐步完善。欢迎提出更多建议。");
+	QMessageBox::about(this,"关于","目前功能还非常简陋，后续会逐步完善。欢迎提出更多建议。");
 }
 
 
@@ -345,6 +404,16 @@ void MusicPlayer::volume1_clicked()
 	}
 	
 }
+
+
+//定位到当前播放歌曲
+void MusicPlayer::locate_clicked()
+{	
+	//ui->viewlist->setFocus();
+	ui->viewlist->setCurrentRow(qtplaylist->currentIndex());
+	ui->viewlist->scrollToItem(ui->viewlist->item(qtplaylist->currentIndex()));
+}
+
 
 //改变进度条
 void MusicPlayer::changeLoad() 

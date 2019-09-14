@@ -94,12 +94,16 @@ Ui::Ui(QWidget *parent) : QWidget(parent)
 	volume2->hide();
 	//volume->setStyleSheet("background:transparent");
 
+	//定位键
+	locate = new QToolButton;
+
 	h3->addWidget(before);
 	h3->addWidget(playpause);
 	h3->addWidget(next);
 	h3->addWidget(playmode);
 	h3->addWidget(volume1);
 	//h3->addWidget(volume2);
+	h3->addWidget(locate);
 	v1->addWidget(time_progress);
 	v1->addWidget(load);
 	v1->addWidget(progress_);
@@ -112,6 +116,7 @@ Ui::Ui(QWidget *parent) : QWidget(parent)
 	before->setIcon(QIcon(":/img/before.png"));
 	playmode->setIcon(QIcon(":/img/顺序播放.png"));
 	volume1->setIcon(QIcon(":/img/声音开.png"));
+	locate->setIcon(QIcon(":/img/定位.png"));
 
 	//设置按键大小
 	playpause->setFixedSize(50,50);
@@ -119,6 +124,7 @@ Ui::Ui(QWidget *parent) : QWidget(parent)
 	before->setFixedSize(50,50);
 	playmode->setFixedSize(50,50);
 	volume1->setFixedSize(30,30);
+	locate->setFixedSize(50,50);
 
 	//提示
 	playpause->setToolTip("播放");
@@ -127,6 +133,7 @@ Ui::Ui(QWidget *parent) : QWidget(parent)
 	playmode->setToolTip("顺序播放");
 	volume1->setToolTip("音量");
 	volume2->setToolTip("音量控制");
+	locate->setToolTip("定位到当前播放歌曲");
 
 	//控制音量大小
 	volume2->setMaximum(100);
@@ -151,6 +158,6 @@ Ui::Ui(QWidget *parent) : QWidget(parent)
 	volume1->setStyleSheet("border:none");
 	volume2->setStyleSheet("border:none");
 	load->setStyleSheet("border:none");
-
+	locate->setStyleSheet("border:none");
 }
 

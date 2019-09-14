@@ -13,6 +13,7 @@
 #include <QUrl>
 #include <QTime>
 #include <QDir>
+#include <QFile>
 #include <QFileInfo>
 #include <QStringListModel>
 #include <QStandardItemModel>
@@ -92,6 +93,9 @@ public slots:
 	//改变音量大小
 	void changeVolume();
 	void volume1_clicked();
+
+	//定位键
+	void locate_clicked();
 	//设置进度条
 	void changeLoad();  //改变进度条
 	void setLoadMaxValue(); //设置进度条最大值
