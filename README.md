@@ -1,10 +1,14 @@
 # QtMucisplayer  
-***
-2019.9.11 version0.9.2   
-continue to update.   
-继续更新。
+***   
+2019.9.14 version0.9.3     
+The ground work is done.    
+基础部分完成。
 ##  效果
 ![mymusic](https://github.com/tryzert/QtMucisplayer/blob/master/2019.0.9.2.png?raw=true)
+***
+2019.9.11 version0.9.2   
+Continue to update.   
+继续更新。
 ***
 2019.9.10 version0.9.1   
 Beautified the interface and fixed some bugs.   
