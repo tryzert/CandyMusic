@@ -36,10 +36,13 @@ public:
 	//析构函数
 	~MusicPlayer();
 
+	void initWindow();
 	void createMenuBar();
 	void createToolBar();
-
-
+	void initPlayer();
+	void initDataBase();
+	void initList();
+	
 	//UI
 	Ui *ui;
 
@@ -55,17 +58,9 @@ public:
 	//播放器内含播放列表
 	QMediaPlaylist *qtplaylist;
 	
-	//歌曲数据列表，这个暂时是用不到的
-	//QList<QString> songlist;
-
-	//视图
-	//QStringListModel *model;
-
-	//歌曲数据
-	//QStringList sl;
 	//数据库存放歌曲信息
 	QSqlDatabase db;
-	void connectdb();
+	void bindSignal();
 
 
 public slots:
@@ -77,13 +72,10 @@ public slots:
 	void delMusicFile();
 	//清理播放列表
 	void clearMusicList();
-	//查看。（待补充的内容）
-
 	//关于
 	void about();
-
 	//播放或暂停音乐
-	void playerState();
+	void reversePlayerState();
 	//上一曲
 	void beforeMusic();
 	//下一曲
@@ -93,7 +85,6 @@ public slots:
 	//改变音量大小
 	void changeVolume();
 	void volume1_clicked();
-
 	//定位键
 	void locate_clicked();
 	//设置进度条
@@ -103,11 +94,9 @@ public slots:
 
 	//播放状态发生变化
 	void indexChanged();
-
 	//对歌曲列表某一首歌双击
 	void songDoubleClicked(QListWidgetItem *);
 	//void musicStateChanged(QMediaPlayer::State _state);
-
 	//鼠标点击事件
 	void mousePressEvent(QMouseEvent *event);
 

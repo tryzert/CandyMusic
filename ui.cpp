@@ -4,6 +4,22 @@
 //Ui类的构造函数
 Ui::Ui(QWidget *parent) : QWidget(parent)
 {
+
+	initTopMenu();
+	initCentreView();
+	initListView();
+	initBottom();
+	initLayout();
+	initIcon();
+	initButtonSize();
+	initToolTip();
+	initStyle();
+	initOther();
+}
+
+
+
+void Ui::initTopMenu() {
 	//打开一个文件
 	openOneFile = new QAction();
 	openOneFile->setText("导入歌曲");
@@ -25,17 +41,60 @@ Ui::Ui(QWidget *parent) : QWidget(parent)
 	about = new QAction();
 	about->setText("关于");
 	about->setIcon(QIcon(":/img/bix.png"));
+}
 
 
+
+void Ui::initCentreView() {
 	//画面中心ui
 	songname = new QLabel;
 	songimage = new QLabel;
-    //list = new QListView();
-	//list = new QLabel;
-    //list = new QMediaPlaylist(this);
-    viewlist = new QListWidget();
-    viewlist->setStyleSheet("background:transparent"); //继承主窗口背景图片
 
+	songname->setText("请打开歌曲...");
+	songname->setFixedSize(700,30);
+	songname->setFont(QFont("微软雅黑",15,1));
+	songname->setAlignment(Qt::AlignHCenter);
+
+	pix.load(":/img/fm.png");
+	songimage->setPixmap(pix);
+	songimage->setFixedSize(354,354);
+	songimage->setAlignment(Qt::AlignCenter);
+}
+
+
+
+void Ui::initListView() {
+    viewlist = new QListWidget();
+    viewlist->setStyleSheet("background:transparent"); //继承主窗口背景图片	
+}
+
+
+
+//播放控制
+void Ui::initBottom() {
+	//播放按钮
+	playpause = new QToolButton;
+	//上一曲
+	before = new QToolButton;
+	//下一曲
+	next = new QToolButton;
+	//循环模式
+	playmode = new QToolButton;
+	//进度条
+	load = new QSlider;
+	//进度条时间显示
+	time_progress = new QLabel;
+	progress_ = new QLabel;
+	//音量控制
+	volume1 = new QToolButton;
+	volume2 = new QSlider(this); //volume2放到主界面，如果没有this,音量滑块就会另开窗口
+	//定位键
+	locate = new QToolButton;	
+}
+
+
+
+void Ui::initLayout() {
 	QVBoxLayout *root = new QVBoxLayout(this);
 
 	QHBoxLayout *h1 = new QHBoxLayout();
@@ -44,58 +103,12 @@ Ui::Ui(QWidget *parent) : QWidget(parent)
 
 	QVBoxLayout *v1 = new QVBoxLayout();
 
-	songname->setText("请打开歌曲...");
-	songname->setFixedSize(700,30);
-	songname->setFont(QFont("微软雅黑",15,1));
-	songname->setAlignment(Qt::AlignHCenter);
-
-
-	pix.load(":/img/fm.png");
-	songimage->setPixmap(pix);
-	songimage->setFixedSize(354,354);
-	songimage->setAlignment(Qt::AlignCenter);
-
-
-	//list->setFixedSize(300,380);
-
 	h1->addWidget(songname);
 	h2->addWidget(songimage);
 	h2->addWidget(viewlist);
 
 	root->addLayout(h1);
 	root->addLayout(h2);
-
-
-	//播放控制
-	//播放按钮
-	playpause = new QToolButton;
-	//上一曲
-	before = new QToolButton;
-	//下一曲
-	next = new QToolButton;
-
-	//循环模式
-	playmode = new QToolButton;
-
-	//进度条
-	load = new QSlider;
-	//进度条时间显示
-	time_progress = new QLabel;
-	time_progress->setText("00:00 / 00:00");
-	time_progress->setAlignment(Qt::AlignHCenter);
-	time_progress->setFixedHeight(20);
-
-	progress_ = new QLabel;
-	progress_->setFixedHeight(10);
-	//音量控制
-	volume1 = new QToolButton;
-	volume2 = new QSlider(this); //volume2放到主界面，如果没有this,音量滑块就会另开窗口
-	volume2->setGeometry(QRect(223,375,100,100));
-	volume2->hide();
-	//volume->setStyleSheet("background:transparent");
-
-	//定位键
-	locate = new QToolButton;
 
 	h3->addWidget(before);
 	h3->addWidget(playpause);
@@ -109,7 +122,11 @@ Ui::Ui(QWidget *parent) : QWidget(parent)
 	v1->addWidget(progress_);
 	h3->addLayout(v1);
 	root->addLayout(h3);
+}
 
+
+
+void Ui::initIcon() {
 	//设置按键图标
 	playpause->setIcon(QIcon(":/img/play.png"));
 	next->setIcon(QIcon(":/img/next.png"));
@@ -117,7 +134,11 @@ Ui::Ui(QWidget *parent) : QWidget(parent)
 	playmode->setIcon(QIcon(":/img/顺序播放.png"));
 	volume1->setIcon(QIcon(":/img/声音开.png"));
 	locate->setIcon(QIcon(":/img/定位.png"));
+}
 
+
+
+void Ui::initButtonSize() {
 	//设置按键大小
 	playpause->setFixedSize(50,50);
 	next->setFixedSize(50,50);
@@ -125,7 +146,11 @@ Ui::Ui(QWidget *parent) : QWidget(parent)
 	playmode->setFixedSize(50,50);
 	volume1->setFixedSize(30,30);
 	locate->setFixedSize(50,50);
+}
 
+
+
+void Ui::initToolTip() {
 	//提示
 	playpause->setToolTip("播放");
 	next->setToolTip("下一曲");
@@ -134,23 +159,12 @@ Ui::Ui(QWidget *parent) : QWidget(parent)
 	volume1->setToolTip("音量");
 	volume2->setToolTip("音量控制");
 	locate->setToolTip("定位到当前播放歌曲");
-
-	//控制音量大小
-	volume2->setMaximum(100);
-	volume2->setMinimum(0);
-	volume2->setFixedSize(50,50);
-	
-	//初始化音量
-    volume2->setValue(35);
+	load->setToolTip("歌曲播放进度");	
+}
 
 
-	//设置水平进度条
-	load->setOrientation(Qt::Horizontal);
-	load->setFixedHeight(10);
-	load->setMinimum(0);
-	load->setMaximum(100);
-	load->setToolTip("歌曲播放进度");
-	
+
+void Ui::initStyle() {
 	before->setStyleSheet("border:none");
 	playpause->setStyleSheet("border:none");
 	next->setStyleSheet("border:none");
@@ -161,3 +175,26 @@ Ui::Ui(QWidget *parent) : QWidget(parent)
 	locate->setStyleSheet("border:none");
 }
 
+
+
+void Ui::initOther() {
+	time_progress->setText("00:00 / 00:00");
+	time_progress->setAlignment(Qt::AlignHCenter);
+	time_progress->setFixedHeight(20);	
+	progress_->setFixedHeight(10);
+
+	volume2->setGeometry(QRect(223,375,100,100));
+	volume2->hide();
+	//控制音量大小
+	volume2->setMaximum(100);
+	volume2->setMinimum(0);
+	volume2->setFixedSize(50,50);
+	//初始化音量
+    volume2->setValue(35);
+
+	//设置水平进度条
+	load->setOrientation(Qt::Horizontal);
+	load->setFixedHeight(10);
+	load->setMinimum(0);
+	load->setMaximum(100);
+}
