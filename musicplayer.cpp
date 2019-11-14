@@ -349,19 +349,20 @@ void MusicPlayer::nextMusic()
 void MusicPlayer::setPlayMode()
 {
 	//Sequential为顺序播放。Loop为列表循环。CurrentItemInLoop为单曲循环。Random为随机。
-	if (qtplaylist->playbackMode()==QMediaPlaylist::Sequential) {
+	auto mode = qtplaylist->playbackMode();
+	if (mode == QMediaPlaylist::Sequential) {
 		qtplaylist->setPlaybackMode(QMediaPlaylist::Loop);
 		ui->playmode->setIcon(QIcon(":/img/列表循环.png"));
 		ui->playmode->setToolTip("列表循环");
-	} else if (qtplaylist->playbackMode()==QMediaPlaylist::Loop) {
+	} else if (mode == QMediaPlaylist::Loop) {
 		qtplaylist->setPlaybackMode(QMediaPlaylist::CurrentItemInLoop); 
 		ui->playmode->setIcon(QIcon(":/img/单曲循环.png"));
 		ui->playmode->setToolTip("单曲循环");
-	} else if (qtplaylist->playbackMode()==QMediaPlaylist::CurrentItemInLoop) {
+	} else if (mode == QMediaPlaylist::CurrentItemInLoop) {
 		qtplaylist->setPlaybackMode(QMediaPlaylist::Random);
 		ui->playmode->setIcon(QIcon(":/img/随机播放.png"));
 		ui->playmode->setToolTip("随机播放");
-	} else if (qtplaylist->playbackMode()==QMediaPlaylist::Random) {
+	} else if (mode == QMediaPlaylist::Random) {
 		qtplaylist->setPlaybackMode(QMediaPlaylist::Sequential);
 		ui->playmode->setIcon(QIcon(":/img/顺序播放.png"));
 		ui->playmode->setToolTip("顺序播放");
@@ -406,8 +407,8 @@ void MusicPlayer::locate_clicked()
 //改变进度条
 void MusicPlayer::changeLoad() 
 {
-	int dur_time = (int) (qtplayer->duration()/1000);  //歌曲时间长度
-	int cur_time = (int) (qtplayer->position()/1000);  //进度条当前位置
+	int dur_time = int(qtplayer->duration()/1000);  //歌曲时间长度
+	int cur_time = int(qtplayer->position()/1000);  //进度条当前位置
 	ui->load->setValue(cur_time);
 	if (ui->load->value()>dur_time) {
 		ui->load->setValue(0);
@@ -424,7 +425,7 @@ void MusicPlayer::setLoadMaxValue()
 {
 	if (qtplayer->isAudioAvailable()) {
 		long a = qtplayer->duration()/1000;
-        int temp = (int) a;
+        int temp = int(a);
 		ui->load->setMaximum(temp);
 	}
 }
@@ -434,7 +435,7 @@ void MusicPlayer::setLoadMaxValue()
 void MusicPlayer::setMusicPosition() 
 {
 	if (qtplayer->isAudioAvailable()) {
-		qint64 temp = (long) (ui->load->value())*1000;
+        qint64 temp = long((ui->load->value())*1000);
 		qtplayer->setPosition(temp);
 	}
 }
@@ -476,6 +477,7 @@ void MusicPlayer::songDoubleClicked(QListWidgetItem *item)
 void MusicPlayer::mousePressEvent(QMouseEvent *event)
 {
 	ui->volume2->hide(); //隐藏音量滑块
+    (void)event;
 }
 
 
