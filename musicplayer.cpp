@@ -159,6 +159,7 @@ void MusicPlayer::openOneFolderFunction()
 		initDataBase();
 		if (db.open()) {
 			QSqlQuery query;
+			db.transaction();  //使用事务一次插入大量数据，可以大大提高读写速度
 			foreach (QFileInfo info, dir.entryInfoList()) {
 				if (info.isFile()) {
 					//１．添加到QMediaPlayList
@@ -170,6 +171,7 @@ void MusicPlayer::openOneFolderFunction()
 					query.exec(QString("INSERT INTO musiclist VALUES('%1','%2')").arg(info.filePath()).arg(info.baseName()));											
 				}
 			}
+			db.commit();
 			db.close();
 		}
 		if (qtplayer->state() != QMediaPlayer::PlayingState) {
@@ -350,22 +352,30 @@ void MusicPlayer::setPlayMode()
 {
 	//Sequential为顺序播放。Loop为列表循环。CurrentItemInLoop为单曲循环。Random为随机。
 	auto mode = qtplaylist->playbackMode();
-	if (mode == QMediaPlaylist::Sequential) {
+	switch (mode)
+	{
+	case QMediaPlaylist::Sequential:
 		qtplaylist->setPlaybackMode(QMediaPlaylist::Loop);
 		ui->playmode->setIcon(QIcon(":/img/列表循环.png"));
 		ui->playmode->setToolTip("列表循环");
-	} else if (mode == QMediaPlaylist::Loop) {
+		break;
+	case QMediaPlaylist::Loop:
 		qtplaylist->setPlaybackMode(QMediaPlaylist::CurrentItemInLoop); 
 		ui->playmode->setIcon(QIcon(":/img/单曲循环.png"));
 		ui->playmode->setToolTip("单曲循环");
-	} else if (mode == QMediaPlaylist::CurrentItemInLoop) {
+		break;
+	case QMediaPlaylist::CurrentItemInLoop:
 		qtplaylist->setPlaybackMode(QMediaPlaylist::Random);
 		ui->playmode->setIcon(QIcon(":/img/随机播放.png"));
 		ui->playmode->setToolTip("随机播放");
-	} else if (mode == QMediaPlaylist::Random) {
+		break;
+	case QMediaPlaylist::Random:
 		qtplaylist->setPlaybackMode(QMediaPlaylist::Sequential);
 		ui->playmode->setIcon(QIcon(":/img/顺序播放.png"));
 		ui->playmode->setToolTip("顺序播放");
+		break;
+	default:
+		break;
 	}
 }
 
