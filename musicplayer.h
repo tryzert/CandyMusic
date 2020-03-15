@@ -77,7 +77,7 @@ public slots:
 	//播放或暂停音乐
 	void reversePlayerState();
 	//上一曲
-	void beforeMusic();
+	void preMusic();
 	//下一曲
 	void nextMusic();
 	//设置歌曲循环模式

@@ -28,6 +28,9 @@ MusicPlayer::~MusicPlayer()
 
 
 void MusicPlayer::initWindow() {
+	//设置窗口标题
+    this->setWindowTitle(QString("🎉🍡Candy Music 0.9.3"));
+
 	//设置窗体图标
 	this->setWindowIcon(QIcon(":/img/mini.png"));
 	
@@ -42,7 +45,7 @@ void MusicPlayer::initWindow() {
 	this->setCentralWidget(ui);
 
 	//设置背景图片
-	QPixmap pix = QPixmap("/home/maple/图片/Wallpapers/155222-1529481142eabe.jpg").scaled(this->size());
+	QPixmap pix = QPixmap("/home/maple/图片/Wallpapers/三体智子4k动漫壁纸_彼岸图网.jpg").scaled(this->size());
     QPalette pal(this->palette());
     pal.setBrush(QPalette::Background, QBrush(pix));
     this->setPalette(pal);
@@ -257,7 +260,7 @@ void MusicPlayer::createToolBar()
 {
 	QToolBar *playctrl = new QToolBar(this);
 	playctrl->setStyleSheet("backgroud:transparent;");
-	playctrl->addWidget(ui->before);
+	playctrl->addWidget(ui->pre);
 	playctrl->addWidget(ui->playpause);
 	playctrl->addWidget(ui->next);
 	playctrl->addWidget(ui->playmode);
@@ -302,7 +305,7 @@ void MusicPlayer::reversePlayerState()
 
 
 //上一曲
-void MusicPlayer::beforeMusic()
+void MusicPlayer::preMusic()
 {
 	//随机播放时，上一曲会跳跃播放。其他模式时，上一曲是紧挨着当前播放曲目的
 	if (qtplaylist->playbackMode()==QMediaPlaylist::Random) {
@@ -514,7 +517,7 @@ void MusicPlayer::bindSignal()
 	connect(ui->playpause,SIGNAL(clicked(bool)),this,SLOT(reversePlayerState()));
 
 	//上一曲
-	connect(ui->before,SIGNAL(clicked(bool)),this,SLOT(beforeMusic()));
+	connect(ui->pre,SIGNAL(clicked(bool)),this,SLOT(preMusic()));
 
 	//下一曲
 	connect(ui->next,SIGNAL(clicked(bool)),this,SLOT(nextMusic()));

@@ -56,7 +56,7 @@ void Ui::initCentreView() {
 	songname->setAlignment(Qt::AlignHCenter);
 
 	pix.load(":/img/fm.png");
-	songimage->setPixmap(pix);
+	// songimage->setPixmap(pix);
 	songimage->setFixedSize(354,354);
 	songimage->setAlignment(Qt::AlignCenter);
 }
@@ -75,7 +75,7 @@ void Ui::initBottom() {
 	//播放按钮
 	playpause = new QToolButton;
 	//上一曲
-	before = new QToolButton;
+	pre = new QToolButton;
 	//下一曲
 	next = new QToolButton;
 	//循环模式
@@ -110,7 +110,7 @@ void Ui::initLayout() {
 	root->addLayout(h1);
 	root->addLayout(h2);
 
-	h3->addWidget(before);
+	h3->addWidget(pre);
 	h3->addWidget(playpause);
 	h3->addWidget(next);
 	h3->addWidget(playmode);
@@ -130,7 +130,7 @@ void Ui::initIcon() {
 	//设置按键图标
 	playpause->setIcon(QIcon(":/img/play.png"));
 	next->setIcon(QIcon(":/img/next.png"));
-	before->setIcon(QIcon(":/img/before.png"));
+	pre->setIcon(QIcon(":/img/pre.png"));
 	playmode->setIcon(QIcon(":/img/顺序播放.png"));
 	volume1->setIcon(QIcon(":/img/声音开.png"));
 	locate->setIcon(QIcon(":/img/定位.png"));
@@ -142,7 +142,7 @@ void Ui::initButtonSize() {
 	//设置按键大小
 	playpause->setFixedSize(50,50);
 	next->setFixedSize(50,50);
-	before->setFixedSize(50,50);
+	pre->setFixedSize(50,50);
 	playmode->setFixedSize(50,50);
 	volume1->setFixedSize(30,30);
 	locate->setFixedSize(50,50);
@@ -154,7 +154,7 @@ void Ui::initToolTip() {
 	//提示
 	playpause->setToolTip("播放");
 	next->setToolTip("下一曲");
-	before->setToolTip("上一曲");
+	pre->setToolTip("上一曲");
 	playmode->setToolTip("顺序播放");
 	volume1->setToolTip("音量");
 	volume2->setToolTip("音量控制");
@@ -165,7 +165,7 @@ void Ui::initToolTip() {
 
 
 void Ui::initStyle() {
-	before->setStyleSheet("border:none");
+	pre->setStyleSheet("border:none");
 	playpause->setStyleSheet("border:none");
 	next->setStyleSheet("border:none");
 	playmode->setStyleSheet("border:none");

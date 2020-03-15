@@ -46,7 +46,7 @@ public:
 	QListWidget *viewlist;
 
 	QToolButton *playpause; //播放或暂停按钮
-	QToolButton *before;	//上一曲
+	QToolButton *pre;	//上一曲
 	QToolButton *next;		//下一曲
 	QToolButton *playmode;  //歌曲循环模式：单曲循环，全部循环，随机播放
 
